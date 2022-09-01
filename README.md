@@ -1,67 +1,38 @@
-# Developing a Neural Network Regression Model
+import pandas as pd
 
-## AIM
+from sklearn.model_selection import train_test_split
 
-To develop a neural network regression model for the given dataset.
+from sklearn.preprocessing import MinMaxScaler
 
-## THEORY
+df=pd.read_csv("data.csv")
 
-Explain the problem statement
+df.head()
 
-## Neural Network Model
+x=df[["INPUT"]].values
 
-Include the neural network model diagram.
+y=df[["OUTPUT"]].values
 
-## DESIGN STEPS
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=42)
 
-### STEP 1:
+import tensorflow as tf
 
-Loading the dataset
+model=tf.keras.Sequential([tf.keras.layers.Dense(8,activation='relu'),
+                           tf.keras.layers.Dense(16,activation='relu'),
+                           tf.keras.layers.Dense(1)])
+model.compile(loss="mae",optimizer="adam",metrics=["mse"])
 
-### STEP 2:
+history=model.fit(x_train,y_train,epochs=1000)
 
-Split the dataset into training and testing
+import numpy as np
 
-### STEP 3:
+x_test
 
-Create MinMaxScalar objects ,fit the model and transform the data.
+preds=model.predict(x_test)
+np.round(preds)
 
-### STEP 4:
+tf.round(model.predict([[20]]))
 
-Build the Neural Network Model and compile the model.
+pd.DataFrame(history.history).plot()
 
-### STEP 5:
-
-Train the model with the training data.
-
-### STEP 6:
-
-Plot the performance plot
-
-### STEP 7:
-
-Evaluate the model with the testing data.
-
-## PROGRAM
-
-Include your code here
-
-## Dataset Information
-
-Include screenshot of the dataset
-
-## OUTPUT
-
-### Training Loss Vs Iteration Plot
-
-Include your plot here
-
-### Test Data Root Mean Squared Error
-
-Find the test data root mean squared error
-
-### New Sample Data Prediction
-
-Include your sample input and output here
-
-## RESULT
+r=tf.keras.metrics.RootMeanSquaredError()
+r(y_test,preds)
